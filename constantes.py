@@ -17,7 +17,7 @@ rewards = [
 rank_max = 13
 
 # Building the deck
-values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']
+values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 deck = np.array(values * 4)
 
 # Different possible statuses

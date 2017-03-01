@@ -30,7 +30,7 @@ class history:
 # Player class with hand, status and an agent to make decisions
 class player:
     
-    def __init__(self,Agent,cards):
+    def __init__(self, Agent, cards):
         self.agent = Agent
         self.cards = cards
         # np.array([0 for k in xrange(15)]+hand)
@@ -38,10 +38,10 @@ class player:
         self.out = 0
     
     # Method for determining the possible moves : Validated
-    def possible_moves(self, last, revo = 0, passe = False):
+    def possible_moves(self, last, revo=0, passe=False):
         if str(self.agent).split('.')[1].split(' ')[0] == "playerAgent":
            print(self.cards)
-        pm = [(0,0)]
+        pm = [(0, 0)]
         if passe:
             return pm
         # If the player doesn't initiate the turn
@@ -62,17 +62,17 @@ class player:
             # Adding the possible moves : play the same number of cards as the last play
             for n in L.keys():
                 if L[n] >= last[1]:
-                    pm.append((rev_ranks[revo][n],last[1]))
+                    pm.append((rev_ranks[revo][n], last[1]))
         # If the player initiates the turn
         else:
             # Get the value of the cards in hand
             w = [ranks[revo][card] for card in self.cards]
             # Get the cardinality of the cards at hand
-            L = {n : np.sum([n==value for value in w]) for n in set(w)}
+            L = {n : np.sum([n == value for value in w]) for n in set(w)}
             # Adding the possibe moves : play any possible number of any card at hand
             for n in L.keys():
                 for k in xrange(L[n]):
-                    pm.append((rev_ranks[revo][n],1+k))
+                    pm.append((rev_ranks[revo][n], 1+k))
         return pm
     
     # Method for playing: remove the cards played : Validated
@@ -110,16 +110,16 @@ class game:
         np.random.shuffle(deck)
         
         # Counting the cards
-        q = 52//n_player
-        r = 52%n_player
+        q = 52 // n_player
+        r = 52 % n_player
         self.players = []
 
         # Creating the players and distributing the cards
         if r == 0:
-            self.players += [player(agents[k],list(deck[k*q:(k+1)*q])) for k in xrange(n_player)]
+            self.players += [player(agents[k], list(deck[k * q: (k+1) * q])) for k in xrange(n_player)]
         else:
-            self.players += [player(agents[k],list(deck[k*(q+1):(k+1)*(q+1)])) for k in xrange(r)]
-            self.players += [player(agents[k],list(deck[r*(q+1)+k*q:r*(q+1)+(k+1)*q])) for k in xrange(n_player-r)]
+            self.players += [player(agents[k], list(deck[k * (q+1): (k+1) * (q+1)])) for k in xrange(r)]
+            self.players += [player(agents[k], list(deck[r * (q+1) + k * q: r * (q+1) + (k+1) * q])) for k in xrange(n_player-r)]
         
         # Setting the order at which the players play
         self.order = range(n_player)
@@ -203,15 +203,19 @@ class game:
         if self.players[self.order[pl]].out == 0:
             
             # The player chooses a move
-            move = self.players[self.order[pl]].choose(self.last,self.revo,self.history,self.counter,(self.last[0]==rev_ranks[self.revo][rank_max]))
+            move = self.players[self.order[pl]].choose(self.last,
+                                                       self.revo,
+                                                       self.history,
+                                                       self.counter,
+                                                       (self.last[0] == rev_ranks[self.revo][rank_max]))
             
             # Updating the stack and the history if the player actually plays
-            if move[0]!= 0:
+            if move[0] != 0:
                 self.last = move
-                self.history.update(self.order[pl],move)
+                self.history.update(self.order[pl], move)
             
             # Removing the cards played from the player's hand
-                self.players[self.order[pl]].play(move,self.revo)
+                self.players[self.order[pl]].play(move, self.revo)
                 self.passes = 0
                 print("Player "+str(self.order[pl])+" has thrown : " + str(move) + " and has " +
                       str(len(self.players[self.order[pl]].cards)) + " cards left.")
