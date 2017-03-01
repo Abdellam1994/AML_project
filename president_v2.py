@@ -8,8 +8,6 @@ import numpy as np
 import operator as op
 import time
 
-
-
 # Ranks for the cards
 
 ranks = [{'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'10':8,'J':9,'Q':10,'K':11,'A':12,'2':13},
@@ -19,19 +17,23 @@ ranks = [{'3':1,'4':2,'5':3,'6':4,'7':5,'8':6,'9':7,'10':8,'J':9,'Q':10,'K':11,'
 rev_ranks = [{dic[key]:key for key in dic.keys()} for dic in ranks]
               
 # Rewards for the cards played
-rewards = [{'0':0,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1,'10':1,'J':1,'Q':1,'K':1,'A':1,'2':1},
-         {'0':0,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1,'10':1,'J':1,'Q':1,'K':1,'A':1,'2':1}]
+rewards = [{'0':0, '3':1, '4':1, '5':1, '6':1, '7':1, '8':1, '9':1, '10':1, 'J':1, 'Q':1, 'K':1, 'A':1, '2':1},
+         {'0':0, '3':1, '4':1, '5':1, '6':1, '7':1, '8':1, '9':1, '10':1, 'J':1, 'Q':1, 'K':1, 'A':1, '2':1}]
 
 # A function that sets the final rewards according to the number of players
-def final_rewards(n, fr = [1000,500,0,-500,-1000]):
-    R = {1 : fr[0], 2 : fr[1], n - 1 : fr[3], n : fr[4]}
+
+
+def final_rewards(n, fr=[1000, 500, 0, -500, -1000]):
+    R = {1: fr[0], 2: fr[1], n - 1: fr[3], n: fr[4]}
     if n >= 4:
         for k in xrange(3, n-1):
             R[k] = fr[2]
     return R
     
-#Function used to get the n best cards out of a hand
-def best_cards(cards,n,revolution = 0):
+# Function used to get the n best cards out of a hand
+
+
+def best_cards(cards, n, revolution=0):
     bc = []
     L = [ranks[revolution][card] for card in cards]
     for k in xrange(n):
@@ -40,8 +42,10 @@ def best_cards(cards,n,revolution = 0):
         L[i] = 0
     return bc
     
-#Function used to get the n worst cards out of a hand
-def worst_cards(cards,n,revo = 0):
+# Function used to get the n worst cards out of a hand
+
+
+def worst_cards(cards, n, revo=0):
     wc = []
     L = [ranks[revo][card] for card in cards]
     for k in xrange(n):
@@ -50,23 +54,24 @@ def worst_cards(cards,n,revo = 0):
         L[i] = 13
     return wc
     
-#Function to go back and forth from the neural network's representation of the
-#Q-values to the actual Q-values through an affine transformation
-def to_NN(Q,fr = [1000,500,0,-500,-1000]):
+# Function to go back and forth from the neural network's representation of the
+# Q-values to the actual Q-values through an affine transformation
+
+
+def to_NN(Q, fr=[1000, 500, 0, -500, -1000]):
     nn = Q*(np.max(fr)+13-np.min(fr))
     nn += np.min(fr)
     return nn
-    
-				
 
 # Computing the binomial coefficients
+
+
 def binom_coeff (p, n):
-	
-	r = min(p, n - p)
-	if r == 0 : 
-		return 1
-		
-	return reduce(op.mul, xrange(n, n - r, -1)) // reduce(op.mul, xrange(1, r + 1))
+    r = min(p, n - p)
+    if r == 0:
+        return 1
+
+    return reduce(op.mul, xrange(n, n - r, -1)) // reduce(op.mul, xrange(1, r + 1))
     
 # Function to get the probabilities of each player having a certain number of a card
 # for every card
@@ -417,52 +422,54 @@ class MonteCarloTS:
 
 
        
-#Game class containing players each with their own agent they use to make decisions
+# Game class containing players each with their own agent they use to make decisions
+
+
 class game:
     
-    def __init__(self,n_player,agents,final):
-        #The stack is empty
-        self.last = (0,0)
+    def __init__(self, n_player, agents, final):
+        # The stack is empty
+        self.last = (0, 0)
         
-        #Setting the rewards
-        self.final = final_rewards(n_player,final)
+        # Setting the rewards
+        self.final = final_rewards(n_player, final)
         
-        #Shuffling the cards
+        # Shuffling the cards
         np.random.shuffle(deck)
         
-        #Counting the cards
+        # Counting the cards
         q = 52//n_player
         r = 52%n_player
         self.players = []
 
-        #Creating the players and distributing the cards
+        # Creating the players and distributing the cards
         if r==0:
-            self.players += [player(agents[k],list(deck[k*q:(k+1)*q])) for k in xrange(n_player)]
+            self.players += [player(agents[k], list(deck[k*q:(k+1)*q])) for k in xrange(n_player)]
         else:
-            self.players += [player(agents[k],list(deck[k*(q+1):(k+1)*(q+1)])) for k in xrange(r)]
-            self.players += [player(agents[k],list(deck[r*(q+1)+k*q:r*(q+1)+(k+1)*q])) for k in xrange(n_player-r)]
+            self.players += [player(agents[k], list(deck[k*(q+1):(k+1)*(q+1)])) for k in xrange(r)]
+            self.players += [player(agents[k], list(deck[r*(q+1)+k*q:r*(q+1)+(k+1)*q])) for k in xrange(n_player-r)]
         
-        #Setting the order at which the players play
+        # Setting the order at which the players play
         self.order = range(n_player)
         
-        #No revolution at the begining of the game
+        # No revolution at the begining of the game
         self.revo = 0
         
-        #The first player starts
+        # The first player starts
         self.actual_player = 0
         
-        #History of cards played
+        # History of cards played
         self.history = history(n_player)
         
-        #Counter of people that left the game
+        # Counter of people that left the game
         self.counter = 0
         
-        #Counting the passes for the initiative transfer
+        # Counting the passes for the initiative transfer
         self.passes = 0
         
-    def reset(self):#Validated
-        #Resetting the game
-        self.last = (0,0)
+    def reset(self):# Validated
+        # Resetting the game
+        self.last = (0, 0)
         desc
         q = 52//len(self.players)
         r = 52%len(self.players)
@@ -476,10 +483,10 @@ class game:
                 self.players[k].cards = list(deck[q*k:q*(k+1)])
         self.revo = 0
         self.counter = 0
-        #Doing the exchange of cards for the two highest and two lowest ranked
+        # Doing the exchange of cards for the two highest and two lowest ranked
         ind = [0 for k in xrange(4)]
         exchanges = [0 for k in xrange(4)]
-        #Choosing the cards to be exchanged
+        # Choosing the cards to be exchanged
         for i in xrange(len(self.players)):
             if self.players[i].status == 'Trou':
                 ind[0] = i
@@ -497,7 +504,7 @@ class game:
                 ind[3] = i
                 exchanges[3] = worst_cards(self.players[i].cards,2)
                 print("Player "+str(i)+" is the president.")
-        #If we're not at the begining of the game, we perform the exchanges and set the order
+        # If we're not at the begining of the game, we perform the exchanges and set the order
         if exchanges[0]!=0:
             for i in xrange(4):
                 self.players[ind[i]].cards += exchanges[3-i]
@@ -519,30 +526,30 @@ class game:
             self.last = (0,0)
             self.passes = 0
         
-        #If the player hasn't left the game yet
+        # If the player hasn't left the game yet
         if self.players[self.order[pl]].out == 0:
             
-            #The player chooses a move
+            # The player chooses a move
             move = self.players[self.order[pl]].choose(self.last,self.revo,self.history,self.counter,(self.last[0]==rev_ranks[self.revo][rank_max]))
             
-            #Updating the stack and the history if the player actually plays
+            # Updating the stack and the history if the player actually plays
             if move[0]!=0:
                 self.last = move
                 self.history.update(self.order[pl],move)
             
-            #Removing the cards played from the player's hand
+            # Removing the cards played from the player's hand
                 self.players[self.order[pl]].play(move,self.revo)
                 self.passes = 0
                 print("Player "+str(self.order[pl])+" has thrown : "+str(move)+" and has "+str(len(self.players[self.order[pl]].cards))+" cards left.")
                 time.sleep(1)
                 
-                #Getting the reward
+                # Getting the reward
                 reward = move[1]*rewards[self.revo][move[0]]
                 
-                #In case the player has emptied his hand
+                # In case the player has emptied his hand
                 if len(self.players[self.order[pl]].cards)==0:
                     print("Player "+str(self.order[pl])+" is out.")
-                    #He leaves the game, updates his status and gets the final reward
+                    # He leaves the game, updates his status and gets the final reward
                     self.counter += 1
                     self.players[self.order[pl]].out = self.counter
                     self.order[pl] = len(self.players) - self.players[self.order[pl]].out
@@ -559,10 +566,10 @@ class game:
                     else:
                         self.players[self.order[pl]].status = 'People'
                 
-                #Learning from the move
+                # Learning from the move
                 self.players[self.order[pl]].update(reward,self.last,self.history,self.revo,self.counter)
                  
-            #The player throws no card
+            # The player throws no card
             else:
                 print("Player "+str(self.order[pl])+" passes his turn and has "+str(len(self.players[self.order[pl]].cards))+" cards left.")
                 self.passes += 1
@@ -580,16 +587,18 @@ class game:
         for k in xrange(len(self.players)):
             print("Player " +str(k)+" has ended as the "+self.players[k].status+".")
         return
-								
-								
+
 import unittest
+
 
 class TestFunctions(unittest.TestCase):
 
-	def test_finalreward(self):
-		self.assertEqual(final_rewards(5, fr = [1000,500,0,-500,-1000]), {1 : 1000, 2 : 500, 3 : 0, 4 :-500 , 5 : -1000})
-		self.assertEqual(final_rewards(6, fr = [1000,500,0,-500,-800]), {1 : 1000, 2 : 500, 3 : 0, 4 : 0, 5 :-500 , 6 : -800})
-												
-												
+    def test_finalreward(self):
+        self.assertEqual(final_rewards(5, fr=[1000, 500, 0, -500, -1000]),
+                         {1: 1000, 2: 500, 3: 0, 4:-500, 5: -1000})
+        self.assertEqual(final_rewards(6, fr=[1000, 500, 0, -500, -800]),
+                         {1: 1000, 2: 500, 3: 0, 4: 0, 5:-500, 6: -800})
+
+
 if __name__ == '__main__':
     unittest.main()
