@@ -10,7 +10,7 @@ class history:
     def __init__(self, n):
         self.players = [{card: 0 for card in ranks[0].keys()} for k in xrange(n)]
         self.left = {card: 4 for card in ranks[0].keys()}
-        self.left_cards = dict({pl: 52//n + 1 for pl in xrange(n) if( pl < 52 % n)}, **{pl: 52//n for pl in xrange(n) if(pl >= 52 % n)})
+        self.left_cards = dict({pl: 52//n + 1 for pl in xrange(n) if(pl < 52 % n)}, **{pl: 52//n for pl in xrange(n) if(pl >= 52 % n)})
      
     def own(self, hand):
         for card in hand:
@@ -53,7 +53,7 @@ class player:
             w = [ranks[revo][card] for card in self.cards]
 
             # Get the playable cards with their cardinality
-            L = {n : np.sum([n == value for value in w]) for n in xrange(1+v,1+rank_max)}
+            L = {n: np.sum([n == value for value in w]) for n in xrange(1 + v, 1 + rank_max)}
 
             # If the player is trou or vice-trou, the equality right activates
             if self.status in statuses[3:]:
@@ -93,7 +93,7 @@ class player:
 
     # Method to update the agent
     def update(self, reward, last, history, revo, counter):
-        self.agent.update(reward, last, self.cards , history, revo, self.possible_moves(last, revo), counter)
+        self.agent.update(reward, last, self.cards, history, revo, self.possible_moves(last, revo), counter)
         return
         
 # Game class containing players each with their own agent they use to make decisions
@@ -142,52 +142,54 @@ class game:
     # Validated
     def reset(self):
         # Resetting the game
-        self.last = (0,0)
+        self.last = (0, 0)
         np.random.shuffle(deck)
-        q = 52 // len(self.players)
-        r = 52 % len(self.players)
+        number_of_players = len(self.players)
+
+        q = 52 // number_of_players
+        r = 52 % number_of_players
         if r != 0:
             for k in xrange(r):
-                self.players[k].cards = list(deck[(q+1)*k:(q+1)*(k+1)])
-            for k in xrange(len(self.players)-r):
-                self.players[r+k].cards = list(deck[(q+1)*r+q*k:(q+1)*r+q*(k+1)])
+                self.players[k].cards = list(deck[(q+1) * k: (q+1) * (k+1)])
+            for k in xrange(number_of_players - r):
+                self.players[r+k].cards = list(deck[(q+1) * r + q * k: (q+1) * r + q * (k+1)])
         else:
-            for k in xrange(len(self.players)):
-                self.players[k].cards = list(deck[q*k:q*(k+1)])
+            for k in xrange(number_of_players):
+                self.players[k].cards = list(deck[q * k: q * (k+1)])
         self.revo = 0
         self.counter = 0
         # Doing the exchange of cards for the two highest and two lowest ranked
         ind = [0 for k in xrange(4)]
         exchanges = [0 for k in xrange(4)]
         # Choosing the cards to be exchanged
-        for i in xrange(len(self.players)):
+        for i in xrange(number_of_players):
             if self.players[i].status == 'Trou':
                 ind[0] = i
-                exchanges[0] = best_cards(self.players[i].cards,2)
+                exchanges[0] = best_cards(self.players[i].cards, 2)
                 print("Player "+str(i)+" is the trou.")
             if self.players[i].status == 'Vice-trou':
-                ind[1]= i
-                exchanges[1] = best_cards(self.players[i].cards,1)
+                ind[1] = i
+                exchanges[1] = best_cards(self.players[i].cards, 1)
                 print("Player "+str(i)+" is the vice-trou.")
             if self.players[i].status == 'Vice-president':
                 ind[2] = i
-                exchanges[2] = worst_cards(self.players[i].cards,1)
+                exchanges[2] = worst_cards(self.players[i].cards, 1)
                 print("Player "+str(i)+" is the vice-president.")
             if self.players[i].status == 'President':
                 ind[3] = i
-                exchanges[3] = worst_cards(self.players[i].cards,2)
+                exchanges[3] = worst_cards(self.players[i].cards, 2)
                 print("Player "+str(i)+" is the president.")
         # If we're not at the begining of the game, we perform the exchanges and set the order
-        if exchanges[0]!=0:
+        if exchanges[0] != 0:
             for i in xrange(4):
                 self.players[ind[i]].cards += exchanges[3-i]
                 for card in exchanges[i]:
                     self.players[ind[i]].cards.remove(card)
             for k in xrange(len(self.players)):
-                self.order[self.players[k].out-1] = len(self.players) - 1 - k
+                self.order[self.players[k].out-1] = number_of_players - 1 - k
         for k in xrange(len(self.players)):
             self.players[k].out = 0
-        self.history = history(len(self.players))
+        self.history = history(number_of_players)
         time.sleep(0.5)
         print("New game starts.")
         return
@@ -245,7 +247,7 @@ class game:
                         self.players[self.order[pl]].status = 'People'
                 
                 # Learning from the move
-                self.players[self.order[pl]].update(reward,self.last,self.history,self.revo,self.counter)
+                self.players[self.order[pl]].update(reward, self.last, self.history, self.revo, self.counter)
                  
             # The player throws no card
             else:
