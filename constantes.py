@@ -1,8 +1,13 @@
 import numpy as np
 
-# Ranks for the cards
-ranks = [{'3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, '10': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12, '2': 13},
-         {'3': 13, '4': 12, '5': 11, '6': 10, '7': 9, '8': 8, '9': 7, '10': 6, 'J': 5, 'Q': 4, 'K': 3, 'A': 2, '2': 1}]
+# Normal ranks of cards
+normal_ranks = {'3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, '10': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12, '2': 13}
+
+# Reverse ranks if there is a revolution
+revo_ranks = {k : 14 - v for k, v in normal_ranks.iteritems()}
+
+# List of the two type of ranks
+ranks = [normal_ranks, revo_ranks]
 
 # Reverse correspondance for cards with ranks
 rev_ranks = [{dic[key]: key for key in dic.keys()} for dic in ranks]
