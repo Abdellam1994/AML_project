@@ -48,21 +48,30 @@ def find_best(n, cards, revolution = 0):
     rank_cards = [ranks[revolution][card] for card in cards]				
     for k in xrange(n):
 		# Choosing the best card			
-        i = np.argmax(L)
-        best_cards.append(rev_ranks[revo][rank_cards[i]])
-        rank_cards[i] = 0
+        i = np.argmax(rank_cards)
+        best_cards.append(rev_ranks[revolution][rank_cards[i]])
+		# Removing the best card
+        rank_cards.remove(rank_cards[i])
     return best_cards
 
-
-# Function used to get the n worst cards out of a hand
-def find_worst(n, cards, revolution =0):
-    wc = []
-    L = [ranks[revo][card] for card in cards]
+""" This function returns a list of the n worst cards of a hand for the exchange 
+of cards step in the game. It takes as parameters :
+- n : number of cards.
+- cards : the hand of the player.
+- revolution : state of the game (if there is a revolution).
+"""
+def find_worst(n, cards, revolution = 0):
+	# Initializing the list of cards
+    worst_cards = []
+    #  storing the rank according to the state of the game (revolution = 0 or 1)
+    rank_cards = [ranks[revolution][card] for card in cards]
     for k in xrange(n):
-        i = np.argmin(L)
-        wc.append(rev_ranks[revo][L[i]])
-        L[i] = 13
-    return wc
+        # Choosing the best card			
+        i = np.argmin(rank_cards)
+        worst_cards.append(rev_ranks[revolution][rank_cards[i]])
+        # Removing the worst card
+        rank_cards.remove(rank_cards[i])
+    return worst_cards
 				
 				
 
@@ -123,9 +132,15 @@ class TestFunctions(unittest.TestCase):
 		self.assertEqual(game_reward(6, reward_array = [1000,500,0,-500,-800]), {1 : 1000, 2 : 500, 3 : 0, 4 : 0, 5 :-500 , 6 : -800})
 	
 	def test_find_best(self):
-		# TO DO
-		return None						
-												
+		hand = ['A', 'Q', '3', 'A']	
+		self.assertEqual(find_best(2, hand), ['A','A'])	
+		self.assertEqual(find_best(2, hand, revolution = 1), ['3','Q'])
+
+	def test_find_worst(self):
+		hand = ['A', 'Q', '3', 'A', '4','2']	
+		self.assertEqual(find_worst(2, hand), ['3','4'])	
+		self.assertEqual(find_worst(2, hand, revolution = 1), ['2','A'])			
+											
 if __name__ == '__main__':
     unittest.main()
 				

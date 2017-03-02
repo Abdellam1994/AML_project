@@ -29,7 +29,6 @@ class history:
 
 # Player class with hand, status and an agent to make decisions
 class player:
-    
     def __init__(self, Agent, cards):
         self.agent = Agent
         self.cards = cards
@@ -173,11 +172,11 @@ class game:
                 print("Player "+str(i)+" is the vice-trou.")
             if self.players[i].status == 'Vice-president':
                 ind[2] = i
-                exchanges[2] = worst_cards(self.players[i].cards, 1)
+                exchanges[2] = find_worst(1, self.players[i].cards)
                 print("Player "+str(i)+" is the vice-president.")
             if self.players[i].status == 'President':
                 ind[3] = i
-                exchanges[3] = worst_cards(self.players[i].cards, 2)
+                exchanges[3] = find_worst(2, self.players[i].cards)
                 print("Player "+str(i)+" is the president.")
         # If we're not at the begining of the game, we perform the exchanges and set the order
         if exchanges[0] != 0:
