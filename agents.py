@@ -3,35 +3,8 @@ import operator as op
 from constantes import *
 
 
-# A function that sets the final rewards according to the number of players
-def final_rewards(n, fr=[1000, 500, 0, -500, -1000]):
-    R = {1: fr[0], 2: fr[1], n - 1: fr[3], n: fr[4]}
-    if n >= 4:
-        for k in xrange(3, n - 1):
-            R[k] = fr[2]
-    return R
 
 
-# Function used to get the n best cards out of a hand
-def best_cards(cards, n, revo=0):
-    bc = []
-    L = [ranks[revo][card] for card in cards]
-    for k in xrange(n):
-        i = np.argmax(L)
-        bc.append(rev_ranks[revo][L[i]])
-        L[i] = 0
-    return bc
-
-
-# Function used to get the n worst cards out of a hand
-def worst_cards(cards, n, revo=0):
-    wc = []
-    L = [ranks[revo][card] for card in cards]
-    for k in xrange(n):
-        i = np.argmin(L)
-        wc.append(rev_ranks[revo][L[i]])
-        L[i] = 13
-    return wc
 
 
 # Function to go back and forth from the neural network's representation of the
@@ -41,47 +14,6 @@ def to_NN(Q, fr=[1000, 500, 0, -500, -1000]):
     nn += np.min(fr)
     return nn
 
-
-def comb(p, n):
-    r = min(p, n - p)
-    if r == 0:
-        return 1
-    numer = reduce(op.mul, xrange(n, n - r, -1))
-    denom = reduce(op.mul, xrange(1, r + 1))
-    return numer // denom
-
-
-# Function to get the probabilities of each player having a certain number of a card
-# for every card
-def compute_probabilities(hand, history, order, pj, revo):
-    probas = []
-    players_left = 0
-    for pl in xrange(len(order)):
-        if history.left[pl] != 0:
-            players_left += 1
-    if players_left > 1:
-        for k in order:
-            if k != pj:
-                hist = history.players[k]
-                for card in ranks[0].keys():
-                    m = hand[card]
-                    p = 4 - history.left[card]
-                    cj = hist[card]
-                    lim = min(4 - m - p, cj)
-                    for i in xrange(1 + lim):
-                        probas.append(comb(i, lim) * (1. / players_left) ** i * (1 - 1. / players_left) ** (lim - i))
-                    if lim < 4:
-                        for i in xrange(1 + lim, 5):
-                            probas.append(0.)
-    else:
-        for k in order:
-            if k != pj:
-                for card in ranks[0].keys():
-                    for i in xrange(5):
-                        probas.append(0.)
-    probas.append(players_left)
-    probas.append(revo)
-    return np.array(probas)
 
 # Neural network class to use for approximating the Q-values
 class NN:
