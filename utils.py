@@ -108,12 +108,7 @@ def binomial_coeff(p, n):
 
 
 
-####################################################################
-############# TO DO : Continue changing the function ############### 
-####################################################################
-
-
-def probabilities(hand, history, order, pj, revolution):
+def probabilities(hand, history, order, player, revolution):
 	
 	""" 
 	This function computes the probabilities for each player to have a certain amount of a 
@@ -122,7 +117,7 @@ def probabilities(hand, history, order, pj, revolution):
 	- hand : list of cards of the player (the hand).
 	- history : the history of the game. (class)
 	- order : the order to know which player had played which card.
-	- pj :
+	- player : order of the main player (learing agent)
 	- revolution : boolean variable, state of the game, either there was a revolution or not.
 	
 	"""
@@ -131,39 +126,36 @@ def probabilities(hand, history, order, pj, revolution):
     probabilities = []
 				
 	# Computing the number of remaining players
-    remaining_players = sum(player > 0 for player in history.nb_cards_player.values())
-
-												
+    remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
+											
     if players_left > 1:
-					
-        for k in order :
-									
-            if k != pj :
-													
-                hist = history.players[k]
+		# Looping through the players
+		for k in order :
+			# Checking if it is not the main player								
+            if k != player :
+				# Computing the probabilities for each card													
                 for card in ranks[0].keys():
-																	
-                    m = hand[card]
-																				
+		            # Number of cards that the main player has												
+                    m = hand[card]	
+			       # Number of cards played
                     p = 4 - history.left[card]
-																				
-                    cj = hist[card]
-                    lim = min(4 - m - p, cj)
-																				
-                    for i in xrange(1 + lim):
-																					
-                        probas.append(comb(i, lim) * (1. / players_left) ** i * (1 - 1. / players_left) ** (lim - i))
-                    if lim < 4:
-                        for i in xrange(1 + lim, 5):
+			       # number of cards left
+				   card_left = 4 - p - m
+                    for i in xrange(1 + card_left):																					
+                        probas.append(comb(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i))                    
+					# adding zeros for the number of cards greater than the number of remaining cards																							
+					if card_left < 4:
+                        for i in xrange(1 + card_left, 5):
                             probas.append(0.)
+	# Adding zeros if there is only one player (to be discussed)																											
     else:
         for k in order:
-            if k != pj:
+            if k != player:
                 for card in ranks[0].keys():
                     for i in xrange(5):
                         probas.append(0.)
 																								
-    probas.append(players_left)
+    probas.append(remaining_players)
     return np.array(probabilities)
 				
 ###################################################################################################
