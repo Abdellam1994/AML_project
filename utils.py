@@ -17,36 +17,44 @@ from constantes import *
 
 
 
-"""This function renders the final reward of the game according to the number of players,
-it takes as input :
-- n : the number of players
-- reward_array : an array containing the rewards for the different positions (president, 
-			    vice-president, people, vice-trou, trou).
-"""																																																																																
+																																																																														
 def game_reward(n, reward_array = [1000, 500, 0, -500, -1000]):
+	
+	"""
+	This function renders the final reward of the game according to the number of players,
+	it takes as input :
+	- n : the number of players
+	- reward_array : an array containing the rewards for the different positions (president, 
+				    vice-president, people, vice-trou, trou).
+	"""
+		
 	# Dictionary of rewards
-    Reward = {1 : reward_array[0], 2 : reward_array[1], n - 1 : reward_array[3], n : reward_array[4]}
+	Reward = {1 : reward_array[0], 2 : reward_array[1], n - 1 : reward_array[3], n : reward_array[4]}
     
 	# Plugging the score for the people to the players in position (2 : n-2)
 	# (if there are more than 4 players)
-    if n >= 4 :
+	if n >= 4 :
 		for k in xrange(3, n - 1):
 			Reward[k] = reward_array[2]
-    return Reward
+	return Reward
 
 
-""" This function returns a list of the n best cards of a hand for the exchange 
-of cards step in the game. It takes as parameters :
-- n : number of cards.
-- cards : the hand of the player.
-- revolution : state of the game (if there is a revolution).
-"""
+
 def find_best(n, cards, revolution = 0):
+	
+	""" 
+	This function returns a list of the n best cards of a hand for the exchange 
+	of cards step in the game. It takes as parameters :
+	- n : number of cards.
+	- cards : the hand of the player.
+	- revolution : state of the game (if there is a revolution).
+	"""
+	
 	# Initializing the list of cards
-    best_cards = []
+	best_cards = []
 	#  storing the rank according to the state of the game (revolution = 0 or 1)
-    rank_cards = [ranks[revolution][card] for card in cards]				
-    for k in xrange(n):
+	rank_cards = [ranks[revolution][card] for card in cards]				
+	for k in xrange(n):
 		# Choosing the best card			
         i = np.argmax(rank_cards)
         best_cards.append(rev_ranks[revolution][rank_cards[i]])
@@ -54,13 +62,17 @@ def find_best(n, cards, revolution = 0):
         rank_cards.remove(rank_cards[i])
     return best_cards
 
-""" This function returns a list of the n worst cards of a hand for the exchange 
-of cards step in the game. It takes as parameters :
-- n : number of cards.
-- cards : the hand of the player.
-- revolution : state of the game (if there is a revolution).
-"""
+
 def find_worst(n, cards, revolution = 0):
+	
+	""" 
+	This function returns a list of the n worst cards of a hand for the exchange 
+	of cards step in the game. It takes as parameters :
+	- n : number of cards.
+	- cards : the hand of the player.
+	- revolution : state of the game (if there is a revolution).
+	"""
+	
 	# Initializing the list of cards
     worst_cards = []
     #  storing the rank according to the state of the game (revolution = 0 or 1)
@@ -73,36 +85,80 @@ def find_worst(n, cards, revolution = 0):
         rank_cards.remove(rank_cards[i])
     return worst_cards
 				
-				
 
 
-def comb(p, n):
-    r = min(p, n - p)
-    if r == 0:
+def binomial_coeff(p, n):
+	
+	""" 
+	This function computes the binomial coefficients, takes as parameters :
+	- p : an integer
+	- n : an integer
+	"""
+	
+	# Optimizing the computation according to which of p and n - p is the smallest
+    min_coeff = min(p, n - p)
+    if min_coeff == 0:
         return 1
-    numer = reduce(op.mul, xrange(n, n - r, -1))
-    denom = reduce(op.mul, xrange(1, r + 1))
-    return numer // denom
+	# Computing (n ! / (n - p)!) or (n ! / (p!)) according to the value of min(p, n - p)
+    numerator = reduce(op.mul, xrange(n, n - min_coeff, -1))
+	# Computing (n - p)! or p! according to the value of min(p, n - p)
+    denominator = reduce(op.mul, xrange(1, min_coeff + 1))	
+	# Returning the eucledian division (binomial coefficients are integers).
+    return numerator // denominator
 
 
-# Function to get the probabilities of each player having a certain number of a card
-# for every card
-def compute_probabilities(hand, history, order, pj, revo):
-    probas = []
-    players_left = 0
-    for pl in xrange(len(order)):
-        if history.left[pl] != 0:
+
+####################################################################
+############# TO DO : Continue changing the function ############### 
+####################################################################
+
+
+def probabilities(hand, history, order, pj, revolution):
+	
+	""" 
+	This function computes the probabilities for each player to have a certain amount of a 
+	certain card given the history and our hand. It will compose our state of space.
+	It takes as parameters :
+	- hand : list of cards of the player (the hand).
+	- history : the history of the game. (class)
+	- order : the order to know which player had played which card.
+	- pj :
+	- revolution : boolean variable, state of the game, either there was a revolution or not.
+	
+	"""
+	
+	# Storing the probabilities
+    probabilities = []
+				
+	# Computing the number of remaining players
+    remaining_players = 0
+		
+	########################
+		# TO DO 
+	########################
+	# Checker si la ligne en dessous est une erreur  : changer par nb_cards_player	
+    for player in xrange(len(order)) :
+        if history.left[player] != 0 :
             players_left += 1
+												
     if players_left > 1:
-        for k in order:
-            if k != pj:
+					
+        for k in order :
+									
+            if k != pj :
+													
                 hist = history.players[k]
                 for card in ranks[0].keys():
+																	
                     m = hand[card]
+																				
                     p = 4 - history.left[card]
+																				
                     cj = hist[card]
                     lim = min(4 - m - p, cj)
+																				
                     for i in xrange(1 + lim):
+																					
                         probas.append(comb(i, lim) * (1. / players_left) ** i * (1 - 1. / players_left) ** (lim - i))
                     if lim < 4:
                         for i in xrange(1 + lim, 5):
@@ -113,9 +169,9 @@ def compute_probabilities(hand, history, order, pj, revo):
                 for card in ranks[0].keys():
                     for i in xrange(5):
                         probas.append(0.)
+																								
     probas.append(players_left)
-    probas.append(revo)
-    return np.array(probas)
+    return np.array(probabilities)
 				
 ###################################################################################################
 ###################################### Unit tests #################################################	

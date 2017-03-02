@@ -6,26 +6,50 @@ from utils import find_best, find_worst, game_reward
 
 
 class history:
+	""" Class in order to keep the history of the game for each player """
     
-    def __init__(self, n):
-        self.players = [{card: 0 for card in ranks[0].keys()} for k in xrange(n)]
-        self.left = {card: 4 for card in ranks[0].keys()}
-        self.left_cards = dict({pl: 52//n + 1 for pl in xrange(n) if(pl < 52 % n)}, **{pl: 52//n for pl in xrange(n) if(pl >= 52 % n)})
+    def __init__(self, n) :
+		"""
+		Constructor method : is initialized with the number of players.
+		"""
+		
+		# History for each player, cards that have been played.
+        self.players = [{card : 0 for card in ranks[0].keys()} for k in xrange(n)]
+		# Remaining cards in the game
+        self.remaining_cards = {card : 4 for card in ranks[0].keys()}
+		# Number of cards left for each player			
+        self.nb_cards_player = dict({player : 52 // n + 1 for player in xrange(n) if (player  < 52 % n)}, **{player : 52 // n for player in xrange(n) if(player >= 52 % n)})
      
-    def own(self, hand):
+    def our_hand(self, hand):
+		"""
+		Function that substract from the remaining cards (history) the cards of the player. 
+		Takes as arguments:
+		- hand : hand of the player, list of lists [['A',3], ['3',2]] for instance	
+		"""
         for card in hand:
-            self.left[card[0]] -= card[1]
-        return
+            self.remaining_cards[card[0]] -= card[1]
+        return None
     
-    def update(self, pl, move):
+    def update(self, player, move):
+		"""
+		Function that updates the history. 
+		Takes as arguments:
+		- player : the player that played the game.
+		- move : the card and number of cards played. move = ['A', 3] for instance.
+		"""
+		# If the move does not mean passing
         if move[1] != 0:
+									
             # Updating the cards played by the player
-            self.players[pl][move[0]] += move[1]
+            self.players[player][move[0]] += move[1]
             # Updating the number of cards of the value played
-            self.left[move[0]] -= move[1]
+            self.remaining_cards[move[0]] -= move[1]
             # Updating the cards left for the player
-            self.left_cards[pl] -= move[1]
-        return
+            self.nb_cards_player[pl] -= move[1]
+        return None
+								
+								
+
 
 # Player class with hand, status and an agent to make decisions
 class player:
