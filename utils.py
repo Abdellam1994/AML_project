@@ -131,15 +131,8 @@ def probabilities(hand, history, order, pj, revolution):
     probabilities = []
 				
 	# Computing the number of remaining players
-    remaining_players = 0
-		
-	########################
-		# TO DO 
-	########################
-	# Checker si la ligne en dessous est une erreur  : changer par nb_cards_player	
-    for player in xrange(len(order)) :
-        if history.left[player] != 0 :
-            players_left += 1
+    remaining_players = sum(player > 0 for player in history.nb_cards_player.values())
+
 												
     if players_left > 1:
 					
