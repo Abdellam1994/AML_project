@@ -2,7 +2,7 @@ import numpy as np
 import time
 
 from constantes import *
-from agents import best_cards, worst_cards, final_rewards
+from utils import find_best, find_worst, game_reward
 
 
 class history:
@@ -104,7 +104,7 @@ class game:
         self.last = (0, 0)
         
         # Setting the rewards
-        self.final = final_rewards(n_player, final)
+        self.final = game_reward(n_player, final)
         
         # Shuffling the cards
         np.random.shuffle(deck)
@@ -165,11 +165,11 @@ class game:
         for i in xrange(number_of_players):
             if self.players[i].status == 'Trou':
                 ind[0] = i
-                exchanges[0] = best_cards(self.players[i].cards, 2)
+                exchanges[0] = find_best(2, self.players[i].cards)
                 print("Player "+str(i)+" is the trou.")
             if self.players[i].status == 'Vice-trou':
                 ind[1] = i
-                exchanges[1] = best_cards(self.players[i].cards, 1)
+                exchanges[1] = find_best(1, self.players[i].cards)
                 print("Player "+str(i)+" is the vice-trou.")
             if self.players[i].status == 'Vice-president':
                 ind[2] = i
