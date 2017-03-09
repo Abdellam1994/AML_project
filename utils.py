@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  2 10:54:02 2017
-
-@author: Abdellah
-"""
-
 
 
 
@@ -13,7 +7,7 @@ For instance a function that renders the two best cards of some player."""
 
 import operator as op
 
-from constantes import *
+from constantes import ranks
 
 
 
@@ -44,7 +38,11 @@ def find_best(n, cards, revolution = 0):
 	
 	""" 
 	This function returns a list of the n best cards of a hand for the exchange 
-	of cards step in the game. It takes as parameters :
+	of cards step in the game. 
+	
+	Parameters
+	----------
+	
 	- n : number of cards.
 	- cards : the hand of the player.
 	- revolution : state of the game (if there is a revolution).
@@ -56,55 +54,63 @@ def find_best(n, cards, revolution = 0):
 	rank_cards = [ranks[revolution][card] for card in cards]				
 	for k in xrange(n):
 		# Choosing the best card			
-        i = np.argmax(rank_cards)
+		i = np.argmax(rank_cards)
         best_cards.append(rev_ranks[revolution][rank_cards[i]])
 		# Removing the best card
         rank_cards.remove(rank_cards[i])
-    return best_cards
+	return best_cards
 
 
 def find_worst(n, cards, revolution = 0):
 	
 	""" 
 	This function returns a list of the n worst cards of a hand for the exchange 
-	of cards step in the game. It takes as parameters :
+	of cards step in the game.
+	
+	Parameters
+	----------
+	
 	- n : number of cards.
 	- cards : the hand of the player.
 	- revolution : state of the game (if there is a revolution).
 	"""
 	
 	# Initializing the list of cards
-    worst_cards = []
+	worst_cards = []
     #  storing the rank according to the state of the game (revolution = 0 or 1)
-    rank_cards = [ranks[revolution][card] for card in cards]
-    for k in xrange(n):
+	rank_cards = [ranks[revolution][card] for card in cards]
+	for k in xrange(n):
         # Choosing the best card			
-        i = np.argmin(rank_cards)
+		i = np.argmin(rank_cards)
         worst_cards.append(rev_ranks[revolution][rank_cards[i]])
         # Removing the worst card
         rank_cards.remove(rank_cards[i])
-    return worst_cards
+	return worst_cards
 				
 
 
 def binomial_coeff(p, n):
 	
 	""" 
-	This function computes the binomial coefficients, takes as parameters :
+	This function computes the binomial coefficients.
+	
+	Parameters
+	----------
+	
 	- p : an integer
 	- n : an integer
 	"""
 	
 	# Optimizing the computation according to which of p and n - p is the smallest
-    min_coeff = min(p, n - p)
-    if min_coeff == 0:
-        return 1
+	min_coeff = min(p, n - p)
+	if min_coeff == 0:
+		return 1
 	# Computing (n ! / (n - p)!) or (n ! / (p!)) according to the value of min(p, n - p)
-    numerator = reduce(op.mul, xrange(n, n - min_coeff, -1))
+	numerator = reduce(op.mul, xrange(n, n - min_coeff, -1))
 	# Computing (n - p)! or p! according to the value of min(p, n - p)
-    denominator = reduce(op.mul, xrange(1, min_coeff + 1))	
+	denominator = reduce(op.mul, xrange(1, min_coeff + 1))	
 	# Returning the eucledian division (binomial coefficients are integers).
-    return numerator // denominator
+	return numerator // denominator
 
 
 
@@ -113,7 +119,10 @@ def probabilities(hand, history, order, player, revolution):
 	""" 
 	This function computes the probabilities for each player to have a certain amount of a 
 	certain card given the history and our hand. It will compose our state of space.
-	It takes as parameters :
+	
+	Parameters
+	----------
+	
 	- hand : list of cards of the player (the hand).
 	- history : the history of the game. (class)
 	- order : the order to know which player had played which card.
@@ -123,40 +132,40 @@ def probabilities(hand, history, order, player, revolution):
 	"""
 	
 	# Storing the probabilities
-    probabilities = []
+	probabilities = []
 				
 	# Computing the number of remaining players
-    remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
+	remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
 											
-    if players_left > 1:
+	if players_left > 1:
 		# Looping through the players
 		for k in order :
 			# Checking if it is not the main player								
-            if k != player :
+			if k != player :
 				# Computing the probabilities for each card													
-                for card in ranks[0].keys():
+				for card in ranks[0].keys():
 		            # Number of cards that the main player has												
-                    m = hand[card]	
-			       # Number of cards played
-                    p = 4 - history.left[card]
-			       # number of cards left
-				   card_left = 4 - p - m
-                    for i in xrange(1 + card_left):																					
-                        probas.append(comb(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i))                    
+					m = hand[card]	
+			        # Number of cards played
+					p = 4 - history.left[card]
+			        # number of cards left
+					card_left = 4 - p - m
+					for i in xrange(1 + card_left):																					
+						probas.append(comb(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i)))                    
 					# adding zeros for the number of cards greater than the number of remaining cards																							
-					if card_left < 4:
-                        for i in xrange(1 + card_left, 5):
-                            probas.append(0.)
+					if (card_left < 4) :
+						for i in xrange(1 + card_left, 5):
+							probas.append(0.)
 	# Adding zeros if there is only one player (to be discussed)																											
-    else:
-        for k in order:
-            if k != player:
-                for card in ranks[0].keys():
-                    for i in xrange(5):
-                        probas.append(0.)
+	else:
+		for k in order:
+			if k != player:
+				for card in ranks[0].keys():
+					for i in xrange(5):
+						probas.append(0.)
 																								
-    probas.append(remaining_players)
-    return np.array(probabilities)
+	probas.append(remaining_players)
+	return np.array(probabilities)
 				
 ###################################################################################################
 ###################################### Unit tests #################################################	
