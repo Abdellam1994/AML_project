@@ -102,7 +102,7 @@ class maxAgent:
             return (0, 0)
 
 
-class playerAgent:
+class RealPlayer:
     def __init__(self):
         self.last = (0, 0)
         self.revo = 0
