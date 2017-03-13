@@ -6,13 +6,12 @@
 For instance a function that renders the two best cards of some player."""
 
 import operator as op
+import numpy as np
 
-from constantes import ranks
+from constants import ranks, rev_ranks
 
 
-
-																																																																														
-def game_reward(n, reward_array = [1000, 500, 0, -500, -1000]):
+def game_reward(n, reward_array=[10, 5, 0, -5, -10]):
 	
 	"""
 	This function renders the final reward of the game according to the number of players,

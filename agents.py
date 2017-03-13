@@ -1,15 +1,11 @@
 import operator as op
 
-from constantes import *
-
-
-
-
+from constants import *
 
 
 # Function to go back and forth from the neural network's representation of the
 # Q-values to the actual Q-values through an affine transformation
-def to_NN(Q, fr=[1000, 500, 0, -500, -1000]):
+def to_NN(Q, fr=[10, 5, 0, -5, -10]):
     nn = Q * (np.max(fr) + 13 - np.min(fr))
     nn += np.min(fr)
     return nn
