@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 23 16:37:34 2017
 
-@author: Abdellah
-"""
 
 import numpy as np
 from sklearn.cluster import KMeans
@@ -12,6 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn import svm
 from sklearn.cross_validation import cross_val_score
 import matplotlib.pyplot as plt
+from constants import deck
 
 # Number of observations
 N = 10000
