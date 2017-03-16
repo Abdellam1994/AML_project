@@ -2,8 +2,12 @@
 
 
 
-""" In this file, we declare some function useful for the game.
-For instance a function that renders the two best cards of some player."""
+""" 
+
+In this file, we declare some function useful for the game.
+For instance a function that renders the two best cards of some player.
+
+"""
 
 import operator as op
 import numpy as np
@@ -14,8 +18,11 @@ from constants import ranks, rev_ranks
 def game_reward(n, reward_array=[10, 5, 0, -5, -10]):
 	
 	"""
-	This function renders the final reward of the game according to the number of players,
-	it takes as input :
+	This function renders the final reward of the game according to the number of players.
+		
+	Parameters
+	----------
+	
 	- n : the number of players
 	- reward_array : an array containing the rewards for the different positions (president, 
 				    vice-president, people, vice-trou, trou).
