@@ -56,14 +56,15 @@ class NN:
 class NNQL_Agent:
 	
 	"""
-		Class that implements an agent whose decisions are based on the Q-Learning
-		Algorithm, using a neural network as an approximation of the Qvalue
+	Class that implements an agent whose decisions are based on the Q-Learning
+	Algorithm, using a neural network as an approximation of the Qvalue
 	"""
-    # Here there is no need for parameters as this agent is a deterministic one
-    def __init__(self):
+	
+    def __init__(self, number_players):
         self.revolution = 0
-        self.list_CNN = [NN() for i in xrange(52)]
-        return
+		self.number_players = number_players
+        self.list_CNN = [NN((self.number_players  - 1) * 13 * 4 + 13) for i in xrange(52)]
+		
 
     # There is also no need to update the state
     def updateState(self, last, cards, history, revolution, counter):
