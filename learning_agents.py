@@ -13,7 +13,6 @@ def to_NN(Q, fr=[10, 5, 0, -5, -10]):
     return nn
 		
 
-
 # Neural network class to use for approximating the Q-values
 class NN:
     def __init__(self, L):
@@ -50,3 +49,32 @@ class NN:
             inter = 1. / (1 + np.exp(-v))
 
         return inter
+
+
+# Agent CNN
+
+class NNQL_Agent:
+	
+	"""
+		Class that implements an agent whose decisions are based on the Q-Learning
+		Algorithm, using a neural network as an approximation of the Qvalue
+	"""
+    # Here there is no need for parameters as this agent is a deterministic one
+    def __init__(self):
+        self.revolution = 0
+        self.list_CNN = [NN() for i in xrange(52)]
+        return
+
+    # There is also no need to update the state
+    def updateState(self, last, cards, history, revolution, counter):
+        self.revolution = revolution
+
+    # Here we choose the simple strategy of alternating between the lowest and largest values
+    def choose(self, pm):
+        # TO DO : COMPLETE
+
+    # We update the revolution
+    def update(self, reward, last, cards, history, revo, moves, counter):
+        self.minMax = 1 - self.minMax
+        self.updateState(last, cards, history, revo, counter)
+        return
