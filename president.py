@@ -260,6 +260,9 @@ class GAME:
 
         # Counting the passes for the initiative transfer
 		self.passes = 0
+		
+		# The heuristics variables coded (list of variables)
+		self.heuristics = [0 for i in xrange(number_player)]
 								
 		# Verbose (printing or not)
 		self.verbose = verbose
@@ -347,7 +350,11 @@ class GAME:
                                                                   self.history,
                                                                   self.counter,
                                                                   (self.last[0] == rev_ranks[self.revolution][rank_max]))
-            # If the agent chooses to play, we update the stacj and the history values
+            
+			# Updating the heuristic
+			self.heuristics[self.order[actual_player]] = move[0]
+			
+			# If the agent chooses to play, we update the stack and the history values
 			if move[0] != 0:
 				self.last = move
 				self.history.update(self.order[actual_player], move)
@@ -362,7 +369,7 @@ class GAME:
 
 					time.sleep(1)
 				# Compute the reward
-				reward = move[1]*rewards[self.revolution][move[0]]
+				reward = move[1] * rewards[self.revolution][move[0]]
 
 				# Here we check if the agent/player has and empty hand
 				if len(self.players[self.order[actual_player]].cards) == 0:
