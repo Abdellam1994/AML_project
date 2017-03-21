@@ -3,6 +3,11 @@ import operator as op
 from constants import *
 
 
+
+
+
+	
+
 class minAgent:
     # Here there is no need for parameters as this agent is a deterministic one
     def __init__(self):
