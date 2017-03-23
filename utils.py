@@ -143,7 +143,7 @@ def probabilities(hand, history, order, player, revolution):
 	# Computing the number of remaining players
 	remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
 											
-	if players_left > 1:
+	if remaining_players > 1:
 		# Looping through the players
 		for k in order :
 			# Checking if it is not the main player								
@@ -157,20 +157,20 @@ def probabilities(hand, history, order, player, revolution):
 			        # number of cards left
 					card_left = 4 - p - m
 					for i in xrange(1 + card_left):																					
-						probas.append(comb(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i)))                    
+						probabilities.append(binomial_coeff(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i)))                    
 					# adding zeros for the number of cards greater than the number of remaining cards																							
 					if (card_left < 4) :
 						for i in xrange(1 + card_left, 5):
-							probas.append(0.)
+							probabilities.append(0.)
 	# Adding zeros if there is only one player (to be discussed)																											
 	else:
 		for k in order:
 			if k != player:
 				for card in ranks[0].keys():
 					for i in xrange(5):
-						probas.append(0.)
+						probabilities.append(0.)
 																								
-	probas.append(remaining_players)
+	probabilities.append(remaining_players)
 	return np.array(probabilities)
 				
 ###################################################################################################
