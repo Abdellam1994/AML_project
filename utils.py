@@ -12,7 +12,7 @@ For instance a function that renders the two best cards of some player.
 import operator as op
 import numpy as np
 
-from constants import ranks, rev_ranks
+from constants import ranks, rev_ranks, list_action
 
 
 def game_reward(n, reward_array=[10, 5, 0, -5, -10]):
@@ -172,7 +172,42 @@ def probabilities(hand, history, order, player, revolution):
 																								
 	probabilities.append(remaining_players)
 	return np.array(probabilities)
-				
+							
+
+def transform_state(move) :
+	
+	"""
+	This function takes as paramter a tuple (card, number_of_cards) and maps it to an action (integer from
+	0 to 64). 
+	
+	Parameters
+	----------
+	
+	move : tuple (card, number_of_cards)	
+	
+	"""
+	
+	# Returning the corresponding index of the chosen move.
+	return list_action.index(move)
+	
+
+def transform_inverse(action) :
+	
+	"""
+	This function takes as paramter an action (integegs) and maps it to a move (tuple).
+	
+	Parameters
+	----------
+	
+	action : integer from 0 to 64	
+	
+	"""
+	
+	# Returning the corresponding move.
+	return list_action(action)
+
+
+
 ###################################################################################################
 ###################################### Unit tests #################################################	
 ###################################################################################################
