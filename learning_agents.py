@@ -4,7 +4,9 @@ import operator as op
 
 from constants import *
 
-from utils import probabilities
+import numpy as np
+
+from utils import probabilities, transform_state, transform_inverse
 
 
 # Function to go back and forth from the neural network's representation of the
@@ -18,7 +20,7 @@ def to_NN(Q, fr=[10, 5, 0, -5, -10]):
 # Neural network class to use for approximating the Q-values
 class NN:
     def __init__(self, Length, learning_rate):
-        self.coefs = [np.random.normal(0., 1., (Length[i + 1], Length[i])) for i in xrange(len(Length) - 1)]
+		self.coefs = [np.random.normal(0., 1., (Length[i + 1], Length[i])) for i in xrange(len(Length) - 1)]
 		self.learning_rate = learning_rate
 		
     def train(self, x, t):
@@ -80,20 +82,20 @@ class NNQL_Agent:
 		
     # There is also no need to update the state
 	def updateState(self, last, hand, history, revolution, counter) :
-        self.revolution = revolution
+		self.revolution = revolution
 		proba = probabilities(hand, history, self.order, self.numero_player, revolution)
 		self.state = np.concatenate((np.array(hand), proba), axis = 0)
 		return None
 
-    def choose(self) :
-        self.action = np.argmax(Q_values)
+	def choose(self) :
+		self.action = np.argmax(Q_values)
 		# Needs to transform the action into the appropriate format
-		return self.action
+		return tranform_inverse(self.action)
 
     # We update the revolution
-    def update(self, reward, last, hand, history, revolution, moves, counter):
-        self.updateState(last, hand, history, revolution, counter)
+	def update(self, reward, last, hand, history, revolution, moves, counter):
+		self.updateState(last, hand, history, revolution, counter)
 		# Computing the different Q_values
 		Q_values = [NN_.predict(self.state) for NN_ in self.list_NN]
 		self.list__NN[self.action].train(self.state, reward + self.gamma * Q_values[self.action])
-        return None
+		return None
