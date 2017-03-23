@@ -84,6 +84,8 @@ class player:
 		self.status = 'People'
 		# is the player playing ?
 		self.out = 0
+		# initilializing the list of rewards
+		self.rewards = []
 
     def possible_moves(self, last, revolution=0, pass_=False):
 
@@ -200,6 +202,8 @@ class player:
 		counter : counter used by certain agents (Q-Learning, Bandits).
 		"""
 		
+		# Storing the rewards obtained
+		self.rewards.append(reward)
 		self.agent.update(reward, last, self.cards, history, revolution, self.possible_moves(last, revolution), counter)
 		return None
 
