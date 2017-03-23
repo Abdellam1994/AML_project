@@ -27,3 +27,11 @@ deck = np.array(values * 4)
 
 # Different possible statuses
 statuses = ['People','President','Vice-president','Trou','Vice-trou']
+
+# list of actions
+
+list_action = []
+
+for i in xrange(5):
+	for j in xrange(13):
+		list_action.append((i,j))
