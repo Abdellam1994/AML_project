@@ -120,7 +120,7 @@ def binomial_coeff(p, n):
 
 
 
-def probabilities(hand, history, order, player, revolution):
+def probabilities(hand, history, revolution):
 	
 	""" 
 	This function computes the probabilities for each player to have a certain amount of a 
@@ -131,8 +131,6 @@ def probabilities(hand, history, order, player, revolution):
 	
 	- hand : list of cards of the player (the hand).
 	- history : the history of the game. (class)
-	- order : the order to know which player had played which card.
-	- player : order of the main player (learing agent)
 	- revolution : boolean variable, state of the game, either there was a revolution or not.
 	
 	"""
@@ -144,32 +142,26 @@ def probabilities(hand, history, order, player, revolution):
 	remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
 											
 	if remaining_players > 1:
-		# Looping through the players
-		for k in order :
-			# Checking if it is not the main player								
-			if k != player :
-				# Computing the probabilities for each card													
-				for card in ranks[0].keys():
-		            # Number of cards that the main player has												
-					m = hand[card]	
-			        # Number of cards played
-					p = 4 - history.left[card]
-			        # number of cards left
-					card_left = 4 - p - m
-					for i in xrange(1 + card_left):																					
-						probabilities.append(binomial_coeff(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i)))                    
-					# adding zeros for the number of cards greater than the number of remaining cards																							
-					if (card_left < 4) :
-						for i in xrange(1 + card_left, 5):
-							probabilities.append(0.)
+		# Computing the probabilities for each card													
+		for card in ranks[0].keys():
+            # Number of cards that the main player has												
+			m = hand.count(card)
+	        # Number of cards played
+			p = 4 - history.remaining_cards[card]
+	        # number of cards left
+			card_left = 4 - p - m
+			for i in xrange(1 + card_left):																					
+				probabilities.append(binomial_coeff(i, card_left) * (1. / (remaining_players - 1)) ** i * (1 - (1. / (remaining_players - 1)) ** (card_left - i)))                    
+			# adding zeros for the number of cards greater than the number of remaining cards																							
+			if (card_left < 4) :
+				for i in xrange(1 + card_left, 5):
+					probabilities.append(0.)
 	# Adding zeros if there is only one player (to be discussed)																											
 	else:
-		for k in order:
-			if k != player:
-				for card in ranks[0].keys():
-					for i in xrange(5):
-						probabilities.append(0.)
-																								
+		for card in ranks[0].keys():
+			for i in xrange(5):
+				probabilities.append(0.)
+																						
 	probabilities.append(remaining_players)
 	return np.array(probabilities)
 							
@@ -204,7 +196,7 @@ def transform_inverse(action) :
 	"""
 	
 	# Returning the corresponding move.
-	return list_action(action)
+	return list_action[action]
 
 
 
