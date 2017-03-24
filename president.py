@@ -84,8 +84,6 @@ class player:
 		self.status = 'People'
 		# is the player playing ?
 		self.out = 0
-		# initilializing the list of rewards
-		self.rewards = []
 
     def possible_moves(self, last, revolution=0, pass_=False):
 
@@ -131,7 +129,7 @@ class player:
 			# Adding the possible moves : play the same number of cards as the last play
 			for n in L.keys() :
 				if L[n] >= last[1]:
-					possible_moves_.append((rev_ranks[self.agent.revo][n], last[1]))
+					possible_moves_.append((rev_ranks[self.agent.revolution][n], last[1]))
 
         # If the player initiates the turn
 		else :
@@ -142,7 +140,7 @@ class player:
 			# Adding the possibe moves : play any possible number of any card at hand
 			for n in L.keys():
 				for k in xrange(L[n]):
-					possible_moves_.append((rev_ranks[self.agent.revo][n], 1+k))
+					possible_moves_.append((rev_ranks[self.agent.revolution][n], 1+k))
 		return possible_moves_
     
 	
@@ -166,7 +164,7 @@ class player:
 			return None
 
 
-    def choose(self, last, revolution, history, counter, pass_) :
+    def choose(self, last, revolution, history, counter, pass_, heuristics) :
 					
 		"""
 		Method that chooses an action according to the agent used.
@@ -182,12 +180,12 @@ class player:
 		"""
 		
 		# Last,cards,history,revo,counter
-		self.agent.updateState(last, self.cards, history, revolution, counter)
+		self.agent.updateState(last, self.cards, history, revolution, counter, heuristics)
 		
 		return self.agent.choose(self.possible_moves(last, revolution, pass_))
 
 	# Method to update the agent
-    def update(self, reward, last, history, revolution, counter):
+    def update(self, reward, last, history, revolution, counter, heuristics):
 					
 		"""
 		Method that updates the agent.
@@ -203,8 +201,8 @@ class player:
 		"""
 		
 		# Storing the rewards obtained
-		self.rewards.append(reward)
-		self.agent.update(reward, last, self.cards, history, revolution, self.possible_moves(last, revolution), counter)
+		self.agent.rewards.append(reward)
+		self.agent.update(reward, last, self.cards, history, revolution, self.possible_moves(last, revolution), counter, heuristics)
 		return None
 
 # Game class containing players each with their own agent they use to make decisions
@@ -214,7 +212,7 @@ class GAME:
 	
 	""" Class that handles the game, contains the players with their agents  """
 
-	def __init__(self, agents, number_player = 4, final = [10, 5, 0, -5, -10], verbose = True):
+	def __init__(self, agents, number_player = 4, final = [18, 10, 0, -10, -18], verbose = True):
 		
 		"""
 		Constructor method : is initialized with the number of players.
@@ -270,6 +268,7 @@ class GAME:
 								
 		# Verbose (printing or not)
 		self.verbose = verbose
+		
 
 
 	def reset(self):
@@ -303,19 +302,23 @@ class GAME:
 			if self.players[i].status == 'Trou':
 				ind[0] = i
 				exchanges[0] = find_best(2, self.players[i].cards)
-				print("Player "+str(i)+" is the trou.")
+				if self.verbose :
+					print("Player "+str(i)+" is the trou.")
 			if self.players[i].status == 'Vice-trou':
 				ind[1] = i
 				exchanges[1] = find_best(1, self.players[i].cards)
-				print("Player "+str(i)+" is the vice-trou.")
+				if self.verbose :
+					print("Player "+str(i)+" is the vice-trou.")
 			if self.players[i].status == 'Vice-president':
 				ind[2] = i
 				exchanges[2] = find_worst(1, self.players[i].cards)
-				print("Player "+str(i)+" is the vice-president.")
+				if self.verbose :
+					print("Player "+str(i)+" is the vice-president.")
 			if self.players[i].status == 'President':
 				ind[3] = i
 				exchanges[3] = find_worst(2, self.players[i].cards)
-				print("Player "+str(i)+" is the president.")
+				if self.verbose :
+					print("Player "+str(i)+" is the president.")
 		# If we're not at the begining of the game, we perform the exchanges and set the order
 		if exchanges[0] != 0:
 			for i in xrange(4):
@@ -323,12 +326,13 @@ class GAME:
 				for card in exchanges[i]:
 					self.players[ind[i]].cards.remove(card)
 			for k in xrange(len(self.players)):
-				self.order[self.players[k].out-1] = number_of_players - 1 - k
+				self.order[self.players[k].out - 1] = number_of_players - 1 - k
 		for k in xrange(len(self.players)):
 			self.players[k].out = 0
 		self.history = history(number_of_players)
-		time.sleep(0.5)
-		print("New game starts.")
+		if self.verbose :
+			time.sleep(0.01)
+			print("New game starts.")
 		return None
 
 	def play_turn(self):
@@ -353,7 +357,8 @@ class GAME:
                                                                   self.revolution,
                                                                   self.history,
                                                                   self.counter,
-                                                                  (self.last[0] == rev_ranks[self.revolution][rank_max]))
+                                                                  (self.last[0] == rev_ranks[self.revolution][rank_max]),
+																self.heuristics)
             
 			# Updating the heuristic
 			self.heuristics[self.order[actual_player]] = move[0]
@@ -364,7 +369,7 @@ class GAME:
 				self.history.update(self.order[actual_player], move)
 
             # Updating the hand
-				self.players[self.order[actual_player]].play(move, self.revolution)
+				self.players[self.order[actual_player]].play(move)
 				self.passes = 0
 				# Logging what has the player
 				if self.verbose :
@@ -401,7 +406,7 @@ class GAME:
 						self.players[self.order[actual_player]].status = 'People'
 
 				# Let's use some reinforcement learning and learn!
-				self.players[self.order[actual_player]].update(reward, self.last, self.history, self.revolution, self.counter)
+				self.players[self.order[actual_player]].update(reward, self.last, self.history, self.revolution, self.counter, self.heuristics)
 
             # This is the case where the Agent/player doesnt want to throw a card
 			else:
@@ -423,13 +428,15 @@ class GAME:
 		"""
 		Method that plays the whole game.
 		"""
-
-		self.reset()
+		
+		self.reset()	
+		
 		while self.counter < len(self.players):
 			self.play_turn()
 												
-												
-		if self.verbose :
+		
+		if self.verbose :								
 			for k in xrange(len(self.players)):
-				print("Player " + str(k) + " has ended as the "+self.players[k].status+".")
+				print("Player " + str(k) + " has ended as the " + self.players[k].status + ".")
+				
 		return None
