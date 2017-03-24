@@ -14,8 +14,8 @@ rev_ranks = [{dic[key]: key for key in dic.keys()} for dic in ranks]
 
 # Rewards for the cards played
 rewards = [
-    {'0': 0, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, '9': 1, '10': 1, 'J': 1, 'Q': 1, 'K': 1, 'A': 1, '2': 1},
-    {'0': 0, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, '9': 1, '10': 1, 'J': 1, 'Q': 1, 'K': 1, 'A': 1, '2': 1}]
+    {'0': 0, '3': 2, '4': 2, '5': 2, '6': 2, '7': 1, '8': 1, '9': 1, '10': 1, 'J': 1, 'Q': 1, 'K': 1, 'A': 1, '2': 1},
+    {'0': 0, '3': 2, '4': 2, '5': 2, '6': 2, '7': 1, '8': 1, '9': 1, '10': 1, 'J': 1, 'Q': 1, 'K': 1, 'A': 1, '2': 1}]
 
 
 # Maximum rank
@@ -30,8 +30,8 @@ statuses = ['People','President','Vice-president','Trou','Vice-trou']
 
 # list of actions
 
-list_action = []
+list_action = [(0,0)]
 
-for i in xrange(5):
-	for j in xrange(13):
-		list_action.append((i,j))
+for i in xrange(1,5):
+	for j in values:
+		list_action.append((j,i))
