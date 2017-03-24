@@ -7,10 +7,11 @@ class minAgent:
     # Here there is no need for parameters as this agent is a deterministic one
     def __init__(self):
         self.revolution = 0
-        return
+        self.rewards = []
+  
 
     # There is also no need to update the state
-    def updateState(self, last, cards, history, revolution, counter):
+    def updateState(self, last, cards, history, revolution, counter, heuristics):
         self.revolution = revolution
 
     # Here we choose the simple strategy of throwing the lowest value possible with the highest number possible
@@ -25,8 +26,8 @@ class minAgent:
             return (0, 0)
 
     # We update the revolutionlution
-    def update(self, reward, last, cards, history, revolution, moves, counter):
-        self.updateState(last, cards, history, revolution, counter)
+    def update(self, reward, last, hand, history, revolution, moves, counter, heuristics):
+        self.updateState(last, hand, history, revolution, counter, heuristics)
         return
 
 
@@ -34,10 +35,11 @@ class maxAgent:
     # Here there is no need for parameters as this agent is a deterministic one
     def __init__(self):
         self.revolution = 0
-        return
+        self.rewards = []
+
 
     # There is also no need to update the state
-    def updateState(self, last, cards, history, revolution, counter):
+    def updateState(self, last, hand, history, revolution, counter, heuristics):
         self.revolution = revolution
 
     # Here we choose the simple strategy of throwing the lowest value possible with the highest number possible
@@ -51,14 +53,20 @@ class maxAgent:
         else:
             return (0, 0)
 
+	# We update the revolutionlution
+    def update(self, reward, last, hand, history, revolution, moves, counter, heuristics):
+        self.updateState(last, hand, history, revolution, counter, heuristics)
+        return
+
 
 class RealPlayer:
     def __init__(self):
         self.last = (0, 0)
         self.revolution = 0
+        self.rewards = []
         return
 
-    def updateState(self, last, cards, history, revolution, counter):
+    def updateState(self, last, hand, history, revolution, counter, heuristics):
         self.revolution = revolution
         self.last = last
         return
@@ -95,8 +103,8 @@ class RealPlayer:
             return (0, 0)
 
     # We update the revolutionlution
-    def update(self, reward, last, cards, history, revolution, moves, counter):
-        self.updateState(last, cards, history, revolution, counter)
+    def update(self, reward, last, hand, history, revolution, moves, counter, heuristics):
+        self.updateState(last, hand, history, revolution, counter, heuristics)
         return
 
 
@@ -105,10 +113,11 @@ class minMaxAgent:
     def __init__(self):
         self.revolution = 0
         self.minMax = 0
-        return
+        self.rewards = []
+
 
     # There is also no need to update the state
-    def updateState(self, last, cards, history, revolution, counter):
+    def updateState(self, last, cards, history, revolution, counter, heuristics):
         self.revolution = revolution
 
     # Here we choose the simple strategy of alternating between the lowest and largest values
@@ -130,7 +139,7 @@ class minMaxAgent:
             return (0, 0)
 
     # We update the revolutionlution
-    def update(self, reward, last, cards, history, revolution, moves, counter):
+    def update(self, reward, last, cards, history, revolution, moves, counter, heuristics):
         self.minMax = 1 - self.minMax
-        self.updateState(last, cards, history, revolution, counter)
+        self.updateState(last, cards, history, revolution, counter, heuristics)
         return
