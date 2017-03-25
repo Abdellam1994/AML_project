@@ -14,7 +14,6 @@ def to_NN(Q, fr=[10, 5, 0, -5, -10]):
     nn += np.min(fr)
     return nn
 
-
 # Neural network class to use for approximating the Q-values
 class NN:
     def __init__(self, Length, learning_rate):
@@ -62,7 +61,7 @@ class NNQL_Agent:
 	Class that implements an agent whose decisions are based on the Q-Learning
 	Algorithm, using a neural network as an approximation of the Qvalue
 	"""
-	
+
 	def __init__(self, number_players, gamma = 0.2, learning_rate = 0.1, epsilon = 0.3):
 		self.revolution = 0
 		self.number_players = number_players
@@ -76,9 +75,8 @@ class NNQL_Agent:
 		self.action = 0
 		self.epsilon = epsilon
 		self.rewards = []
-		
-		
-    # There is also no need to update the state
+
+	# There is also no need to update the state
 	def updateState(self, last, hand, history, revolution, counter, heuristics) :
 		self.revolution = revolution
 		proba = probabilities(hand, history, revolution)
@@ -117,7 +115,7 @@ class LSTD_Agent:
 	
 	"""
 	Class that implements an agent whose decisions are based on the Q-Learning
-	Algorithm, using a neural network as an approximation of the Qvalue
+	Algorithm, using the least square method
 	"""
 	
 	def __init__(self, number_players, gamma = 0.2, learning_rate = 0.1, epsilon = 0.3):
@@ -172,8 +170,8 @@ class LSTD_Agent:
 class UCB1_Agent:
 	
 	"""
-	Class that implements an agent whose decisions are based on the Q-Learning
-	Algorithm, using a neural network as an approximation of the Qvalue
+	Class that implements an agent whose decisions are based the heuristics and UCB
+	ALgorithm
 	"""
 	
 	def __init__(self, number_players, gamma = 0.2, learning_rate = 0.1, epsilon = 0.3):
@@ -189,8 +187,7 @@ class UCB1_Agent:
 		self.action = 0
 		self.epsilon = epsilon
 		self.rewards = []
-		
-		
+
     # There is also no need to update the state
 	def updateState(self, last, hand, history, revolution, counter, heuristics) :
 		self.revolution = revolution
