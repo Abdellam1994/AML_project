@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import operator as op
-
 from constants import *
 
 import numpy as np
@@ -15,7 +13,7 @@ def to_NN(Q, fr=[10, 5, 0, -5, -10]):
     nn = Q * (np.max(fr) + 13 - np.min(fr))
     nn += np.min(fr)
     return nn
-		
+
 
 # Neural network class to use for approximating the Q-values
 class NN:
@@ -47,7 +45,7 @@ class NN:
 
     def predict(self, x):
         inter = x
-								
+
         # Forward propagation
         for i in xrange(len(self.coefs)):
             v = self.coefs[i].dot(inter)

@@ -1,136 +1,85 @@
 # -*- coding: utf-8 -*-
+import sys
 
-
-# Importing the different objects
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
 
 from president import GAME
 from agents import minAgent, maxAgent, minMaxAgent
 from learning_agents import NNQL_Agent, LSTD_Agent, UCB1_Agent
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 
+# Choosing the agent between lstd, ucb1, nnql
+if __name__ == '__main__':
 
-######################################################################
-################## NEURAL NETWORK Q-LEARNING #########################
-######################################################################
+    agent = sys.argv[1]
+    compare = sys.argv[2]
 
+    if agent == 'ucb1':
+        OurAgent = UCB1_Agent(4)
+    elif agent == 'lstd':
+        OurAgent = LSTD_Agent(4)
+    else:
+        OurAgent = NNQL_Agent(4)
 
-# Launching the game and gathering the rewards
+    # Launching the game and gathering the rewards
 
-NN_agent = NNQL_Agent(4)
+    agents = [minAgent(), OurAgent, maxAgent(), minMaxAgent()]
 
-agents = [minAgent(), NN_agent, maxAgent(), minMaxAgent()]
+    game = GAME(agents, verbose=False)
 
+    number_play = 1000
 
-game = GAME(agents, verbose = False)
+    for i in tqdm(range(number_play)):
+        game.play_game()
 
-number_play = 10000
+    rewards_ = np.array(OurAgent.rewards)
 
-for i in tqdm(range(number_play)):
-	game.play_game()
-	
-	
-rewards_NNQL = np.array(NN_agent.rewards)
+    rewards_plot_ = np.log(np.cumsum(rewards_))
 
-rewards_plot_NNQL = np.log(np.cumsum(rewards_NNQL))
+    np.savetxt("rewards_{}.txt".format(agent), rewards_)
 
-np.savetxt("rewards_NNQL.txt", rewards_NNQL)
+    if agent == 'ucb1':
+        title = "Obtained rewards for UCB1"
+    elif agent == 'lstd':
+        title = "Obtained rewards for LSTD"
+    else:
+        title = "Obtained rewards for Neural Network Q_learning"
 
-plt.figure()
-plt.title("Obtained rewards for Neural Network Q_learning")
-plt.xlabel("Turns")
-plt.ylabel("Reward")
-plt.plot(rewards_plot_NNQL)
-plt.savefig("rewNNQL.jpg")
-plt.show()
+    plt.figure()
+    plt.title(title)
+    plt.xlabel("Turns")
+    plt.ylabel("Reward")
+    plt.plot(rewards_plot_)
+    plt.savefig("rew_{}.jpg".format(agent))
+    plt.show()
 
+    df_rewards_plot_ = pd.DataFrame(rewards_plot_)
+    df_rewards_plot_.to_csv('rew_{}.csv'.format(agent))
+    ######################################################################
+    ####################### Comparison ###################################
+    ######################################################################
 
-######################################################################
-####################### LSTD Q-LEARNING ##############################
-######################################################################	
+    if compare == 'compare':
 
-# Launching the game and gathering the rewards
+        rewards_plot_NNQL = np.array(pd.read_csv('rew_nnql.csv'))
+        rewards_plot_LSTD = np.array(pd.read_csv('rew_ucb1.csv'))
+        rewards_plot_UCB1 = np.array(pd.read_csv('rew_lstd.csv'))
 
-LS_agent = LSTD_Agent(4)
+        n = min((len(rewards_plot_NNQL), len(rewards_plot_LSTD),len(rewards_plot_UCB1)))
 
-agents = [minAgent(), LS_agent, maxAgent(), minMaxAgent()]
+        rewards_plot_NNQL = rewards_plot_NNQL[:n]
+        rewards_plot_LSTD = rewards_plot_LSTD[:n]
+        rewards_plot_UCB1 = rewards_plot_UCB1[:n]
 
-
-game = GAME(agents, verbose = False)
-
-number_play = 10000
-
-for i in tqdm(range(number_play)):
-	game.play_game()
-	
-	
-rewards_LSTD = np.array(NN_agent.rewards)
-
-rewards_plot_LSTD = np.log(np.cumsum(rewards_LSTD))
-
-np.savetxt("rewards_LSTD.txt", rewards_LSTD)
-
-plt.figure()
-plt.title("Obtained rewards for LSTD")
-plt.xlabel("Turns")
-plt.ylabel("Reward")
-plt.plot(rewards_plot_LSTD)
-plt.savefig("rewLSTD.jpg")
-plt.show()
-
-
-######################################################################
-############################# UCB1 ###################################
-######################################################################	
-
-# Launching the game and gathering the rewards
-
-UC_agent = UCB1_Agent(4)
-
-agents = [minAgent(), UC_agent, maxAgent(), minMaxAgent()]
-
-
-game = GAME(agents, verbose = False)
-
-number_play = 10000
-
-for i in tqdm(range(number_play)):
-	game.play_game()
-	
-	
-rewards_UCB1 = np.array(NN_agent.rewards)
-
-rewards_plot_UCB1 = np.log(np.cumsum(rewards_UCB1))
-
-np.savetxt("rewards_UCB1.txt", rewards_UCB1)
-
-plt.figure()
-plt.title("Obtained rewards for UCB1")
-plt.xlabel("Turns")
-plt.ylabel("Reward")
-plt.plot(rewards_plot_UCB1)
-plt.savefig("rewUCB1.jpg")
-plt.show()
-
-
-######################################################################
-####################### Comparison ###################################
-######################################################################	
-
-n = min((len(rewards_plot_NNQL), len(rewards_plot_LSTD),len(rewards_plot_UCB1)))
-
-rewards_plot_NNQL = rewards_plot_NNQL[:n]
-rewards_plot_LSTD = rewards_plot_LSTD[:n]
-rewards_plot_UCB1 = rewards_plot_UCB1[:n]
-
-plt.figure()
-plt.title("Comparison of the different approaches")
-plt.xlabel("Turns")
-plt.ylabel("Reward")
-plt.plot(rewards_plot_UCB1)
-plt.plot(rewards_plot_LSTD)
-plt.plot(rewards_plot_NNQL)
-plt.savefig("comparison.jpg")
-plt.show()
+        plt.figure()
+        plt.title("Comparison of the different approaches")
+        plt.xlabel("Turns")
+        plt.ylabel("Reward")
+        plt.plot(rewards_plot_UCB1)
+        plt.plot(rewards_plot_LSTD)
+        plt.plot(rewards_plot_NNQL)
+        plt.savefig("comparison.jpg")
+        plt.show()
