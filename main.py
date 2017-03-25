@@ -14,8 +14,9 @@ from learning_agents import NNQL_Agent, LSTD_Agent, UCB1_Agent
 # Choosing the agent between lstd, ucb1, nnql
 if __name__ == '__main__':
 
-    agent = sys.argv[1]
-    compare = sys.argv[2]
+    number_play = sys.argv[1]
+    agent = sys.argv[2]
+    compare = sys.argv[3]
 
     if agent == 'ucb1':
         OurAgent = UCB1_Agent(4)

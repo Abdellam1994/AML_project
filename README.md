@@ -21,5 +21,6 @@ the UCB1 or the LSTD Agent, just open ipython and run the following:
 
 To choose the agent, it has to be either `lstd`, `ucb1` or `nnql`.
 
-The `compare` argument can be used if and only if you already did the 
+The `compare` argument can be either `compare` or `nocompare`.
+ It is can be used if and only if you already did the 
 learning with the 3 agents before, and compares the 3 cumulative rewards
