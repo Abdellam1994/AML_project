@@ -14,7 +14,7 @@ from learning_agents import NNQL_Agent, LSTD_Agent, UCB1_Agent
 # Choosing the agent between lstd, ucb1, nnql
 if __name__ == '__main__':
 
-    number_play = sys.argv[1]
+    number_play = int(sys.argv[1])
     agent = sys.argv[2]
     compare = sys.argv[3]
 
@@ -30,8 +30,6 @@ if __name__ == '__main__':
     agents = [minAgent(), OurAgent, maxAgent(), minMaxAgent()]
 
     game = GAME(agents, verbose=False)
-
-    number_play = 1000
 
     for i in tqdm(range(number_play)):
         game.play_game()
