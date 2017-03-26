@@ -63,9 +63,9 @@ if __name__ == '__main__':
 
     if compare == 'compare':
 
-        rewards_plot_NNQL = np.array(pd.read_csv('rew_nnql.csv'))
-        rewards_plot_LSTD = np.array(pd.read_csv('rew_ucb1.csv'))
-        rewards_plot_UCB1 = np.array(pd.read_csv('rew_lstd.csv'))
+        rewards_plot_NNQL = np.array(pd.read_csv('rew_nnql.csv')['0'])
+        rewards_plot_LSTD = np.array(pd.read_csv('rew_lstd.csv')['0'])
+        rewards_plot_UCB1 = np.array(pd.read_csv('rew_ucb1.csv')['0'])
 
         n = min((len(rewards_plot_NNQL), len(rewards_plot_LSTD),len(rewards_plot_UCB1)))
 
@@ -77,8 +77,9 @@ if __name__ == '__main__':
         plt.title("Comparison of the different approaches")
         plt.xlabel("Turns")
         plt.ylabel("Reward")
-        plt.plot(rewards_plot_UCB1)
-        plt.plot(rewards_plot_LSTD)
-        plt.plot(rewards_plot_NNQL)
+        plt.plot(rewards_plot_UCB1, label = "UCB1 Heurisitcs")
+        plt.plot(rewards_plot_LSTD, label = "LSTD")
+        plt.plot(rewards_plot_NNQL, label = "Neural Network Qlearning")
+        plt.legend()
         plt.savefig("comparison.jpg")
         plt.show()

@@ -361,7 +361,7 @@ class GAME:
 																self.heuristics)
             
 			# Updating the heuristic
-			self.heuristics[self.order[actual_player]] = move[0]
+			self.heuristics[self.order[actual_player]] = move[1]
 			
 			# If the agent chooses to play, we update the stack and the history values
 			if move[0] != 0:

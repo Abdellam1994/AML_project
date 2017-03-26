@@ -121,26 +121,26 @@ def binomial_coeff(p, n):
 
 
 def probabilities(hand, history, revolution):
-	
+
 	""" 
 	This function computes the probabilities for each player to have a certain amount of a 
 	certain card given the history and our hand. It will compose our state of space.
-	
+
 	Parameters
 	----------
-	
+
 	- hand : list of cards of the player (the hand).
 	- history : the history of the game. (class)
 	- revolution : boolean variable, state of the game, either there was a revolution or not.
-	
+
 	"""
-	
+
 	# Storing the probabilities
 	probabilities = []
-				
+
 	# Computing the number of remaining players
 	remaining_players = sum(x > 0 for x in history.nb_cards_player.values())
-											
+
 	if remaining_players > 1:
 		# Computing the probabilities for each card													
 		for card in ranks[0].keys():
