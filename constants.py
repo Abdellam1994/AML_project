@@ -31,7 +31,6 @@ statuses = ['People','President','Vice-president','Trou','Vice-trou']
 # list of actions
 
 list_action = [(0,0)]
-
 for i in xrange(1,5):
 	for j in values:
 		list_action.append((j,i))
