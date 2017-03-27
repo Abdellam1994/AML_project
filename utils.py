@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
-
 """ 
 
 In this file, we declare some function useful for the game.

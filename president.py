@@ -6,7 +6,6 @@ from utils import find_best, find_worst, game_reward
 
 
 """
-
 	This file contains the three main classes of the game :
 	- history : in order to keep the history of the game.
 	- player : the player that plays with an agent.
@@ -142,7 +141,6 @@ class player:
 				for k in xrange(L[n]):
 					possible_moves_.append((rev_ranks[self.agent.revolution][n], 1+k))
 		return possible_moves_
-    
 	
     def play(self, move):
 					
@@ -162,7 +160,6 @@ class player:
 			for k in xrange(move[1]):
 				self.cards.remove(move[0])
 			return None
-
 
     def choose(self, last, revolution, history, counter, pass_, heuristics) :
 					
@@ -268,8 +265,6 @@ class GAME:
 								
 		# Verbose (printing or not)
 		self.verbose = verbose
-		
-
 
 	def reset(self):
 					
@@ -421,7 +416,6 @@ class GAME:
 			self.actual_player += 1
 			
 		return None
- 
 
 	def play_game(self):
 					
@@ -433,7 +427,7 @@ class GAME:
 		
 		while self.counter < len(self.players):
 			self.play_turn()
-												
+
 		
 		if self.verbose :								
 			for k in xrange(len(self.players)):

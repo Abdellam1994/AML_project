@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import random
-
 import numpy as np
 
 from constants import *
@@ -19,7 +17,7 @@ class NN:
     def __init__(self, Length, learning_rate):
 		self.coefs = [np.random.normal(0., 1., (Length[i + 1], Length[i])) for i in xrange(len(Length) - 1)]
 		self.learning_rate = learning_rate
-		
+
     def train(self, x, t):
         inter = [x]
         grad = [np.zeros(K.shape) for K in self.coefs]
@@ -280,7 +278,6 @@ class UCB1_Agent:
 		self.means[state][a] *= (self.visits_number[state][a])
 		self.means[state][a] += reward
 		self.means[state] /= (self.visits_number[state][a] + 1)
-
 
 		self.visits_number[state][a] += 1
 		self.iteration_number[state] += 1
