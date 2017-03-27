@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
@@ -8,6 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn import svm
 from sklearn.cross_validation import cross_val_score
 import matplotlib.pyplot as plt
+
 from constants import deck
 
 # Number of observations
@@ -18,13 +17,11 @@ K = 20
 # nb of components for PCA
 nb_components = 20
 
-
 np.random.shuffle(deck)
 
 X = np.concatenate((np.random.randint(0,14,size = 13),np.random.random(n))).reshape((1, n + 13))
 
-
-for i in xrange(N) :
+for i in xrange(N):
 	X = np.concatenate((X, np.concatenate((np.random.randint(0,14,size = 13),np.random.random(n))).reshape((1, n + 13))), 0)
 
 
@@ -33,16 +30,13 @@ X = pca.fit_transform(X)
 
 # Scale features
 X -= np.mean(X, axis=0)
-X /= np.std(X, axis=0)	
-	
-	
+X /= np.std(X, axis=0)
+
 # Doing the Kmeans clustering	
 y = KMeans(n_clusters = K).fit(X).labels_
-
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-
-#fitting the parameters for the svm classification ()
+# fitting the parameters for the svm classification
 
 C_range = [10**i for i in xrange(-3,3)] 
 gamma_range = [10**i for i in xrange(-3,3)]
@@ -53,7 +47,6 @@ for C in C_range:
     for gamma in gamma_range:
         clf = svm.SVC(C=C, gamma=gamma)
         scores.append(cross_val_score(clf, X_train, y_train, cv=5).mean())
-        
 
 # plot the scores of the grid
 # We extract just the scores
@@ -70,16 +63,14 @@ plt.yticks(np.arange(len(C_range)), C_range)
 plt.title('Validation accuracy')
 plt.show()
 
-
 # Retrieving the best indices
 C_index, gamma_index = np.unravel_index(scores.argmax(), scores.shape)
 C = C_range[C_index]
 gamma = gamma_range[C_index]
 
-
-
 ##################################### MONTE CARLO TREE SEARCH ALGORITHM ######################################
 
+# This experiment was not relevant
 """
 class Node():
 	def __init__(self, state, parent=None):
